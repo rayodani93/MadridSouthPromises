@@ -1,0 +1,27 @@
+
+.nav-item {
+    display: inline;
+    margin-right: 10px; 
+  }
+  
+  .nav-item span {
+    text-decoration: none;
+    color:  #001764; 
+    font-weight: bold;
+  }
+  
+  .nav-item span:hover {
+    color: rgb(253, 0, 190);
+  }
+  
+  /* Quiero separar los elementos horizontalmente */
+  .nav-item:not(:last-child):after {
+    content: "/";
+    margin-left: 10px; 
+  }
+  
+  .nav-item a {
+    text-decoration: none; /* para que no se subralle el enlace que viene por defecto con la clase link */
+    color: inherit; 
+  }
+  

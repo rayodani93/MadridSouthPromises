@@ -1,0 +1,33 @@
+.container h2 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    color: rgb(253, 0, 190);
+    text-shadow: 2px 2px 4px #001764;
+    margin-bottom: 20px;
+
+}
+.navbar {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+  }
+
+
+.card-title {
+    font-weight: bold;
+    color: #001764;
+    text-align: justify;
+
+}
+
+.card-description {
+    color: #001764;
+    text-align: justify;
+}
+
+.card {  
+    margin-bottom: 20px; 
+}
+

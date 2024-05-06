@@ -1,0 +1,32 @@
+/* PaginaInicio.css */
+
+.container {
+  background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
+  padding: 20px; 
+}
+
+.card-body {
+  background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
+  padding: 20px; /* Agrega un padding para dar espacio al contenido */
+}
+
+.container h1 {
+  font-family: 'Roboto', sans-serif; 
+  font-size: 60px;
+  font-weight: bold;
+  text-align: center;
+  color:  #001764;
+  text-shadow: 2px 2px 4px rgb(253, 0, 190); 
+  margin-bottom: 20px; 
+}
+
+.container .text {
+  font-weight: bold;
+  color:  #001764; 
+  text-align: justify; 
+}
+
+.container .image-container {
+  display: flex; 
+  justify-content: center; 
+}
