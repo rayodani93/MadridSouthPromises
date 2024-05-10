@@ -1,11 +1,12 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom'; // Importa Link desde react-router-dom
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import './styles/Login.css';
 import NavBar from './NavBar';
 
 function Login() {
   const [correoElectronico, setCorreoElectronico] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [error, setError] = useState<string>('');
 
   const handleChangeCorreoElectronico = (event: ChangeEvent<HTMLInputElement>) => {
     setCorreoElectronico(event.target.value);
@@ -15,11 +16,30 @@ function Login() {
     setContrasena(event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Datos de inicio de sesión en el backend
-    console.log('Correo electrónico:', correoElectronico);
-    console.log('Contraseña:', contrasena);
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ correoElectronico, contrasena }),
+      });
+      if (!response.ok) {
+        throw new Error('Credenciales incorrectas');
+      }
+      const data = await response.json();
+
+      console.log('Token JWT:', data.token);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Ocurrió un error');
+      }
+    }
   };
 
   return (
@@ -59,6 +79,7 @@ function Login() {
                 </div>
 
                 <button type="submit" className="btn btn-primary btn-block mb-4">Iniciar Sesión</button>
+                {error && <div className="error-message">{error}</div>}
                 <div className="registrarse-link">
                   ¿No tienes una cuenta? <Link to="/registro">Registrarse</Link>
                 </div>
@@ -71,7 +92,6 @@ function Login() {
         <NavBar />
       </div>
     </div>
-
   );
 }
 

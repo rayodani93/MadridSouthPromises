@@ -1,4 +1,4 @@
-/* PaginaInicio.css */
+
 
 .container {
   background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
@@ -7,7 +7,7 @@
 
 .card-body {
   background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
-  padding: 20px; /* Agrega un padding para dar espacio al contenido */
+  padding: 20px; 
 }
 
 .container h1 {
