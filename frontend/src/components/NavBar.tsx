@@ -38,7 +38,7 @@ const NavBar: React.FC = () => {
         <NavItem icon={faHome} text="Inicio" to="/" />
         <NavItem icon={faUsers} text="Staff" to="/staff" />
         <NavItem icon={faUnlockAlt} text="Acceso" to="/login" />
-        <NavItem icon={faTrophy} text="Torneos" />
+        <NavItem icon={faTrophy} text="Torneos" to="/torneos" />
         <NavItem icon={faTools} text="Tecnificación" />       
       </ul>     
     </nav>    

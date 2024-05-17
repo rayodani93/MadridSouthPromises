@@ -20,10 +20,16 @@ const PaginaInicio: React.FC = () => {
               <Card.Img variant="top" src={fotoInicio} alt="Foto de inicio" className="w-100" />
               <Card.Body>
                 <Card.Text className="text">
-                  <p>En Madrid Promises South, nos especializamos en la formación de equipos para participar en torneos de fútbol que se llevan a cabo durante periodos vacacionales clave, como verano, Navidad y Semana Santa. Nuestra misión es brindar una oportunidad única a jugadores que no cuentan con competiciones federadas en sus respectivas federaciones durante esos períodos.</p>
-                  <p>Durante estos torneos, los participantes tienen la oportunidad de seguir compitiendo de manera divertida y estimulante, además de conocer a otros compañeros de juego. Nuestro objetivo es ofrecer una experiencia en la que los jugadores puedan seguir desarrollando sus habilidades futbolísticas mientras disfrutan del espíritu competitivo en un entorno amigable y colaborativo.</p>
-                  <p>Además de participar en estos torneos, también organizamos sesiones de entrenamiento y tecnificación para preparar a los equipos y mejorar el rendimiento de cada jugador. Creemos en la importancia de ofrecer una experiencia integral que promueva el crecimiento personal y deportivo de nuestros jóvenes futbolistas.</p>
-                  <p>En Madrid Promises South, estamos comprometidos con la excelencia y la pasión por el fútbol. Además, contamos con un equipo de fisioterapeutas que viajarán con nosotros, ofreciendo asistencia inmediata ante cualquier lesión. Únete a nosotros y sé parte de una comunidad que valora el trabajo en equipo, la superación personal y la diversión en el campo de juego.</p>
+                  En Madrid Promises South, nos especializamos en la formación de equipos para participar en torneos de fútbol que se llevan a cabo durante periodos vacacionales clave, como verano, Navidad y Semana Santa. Nuestra misión es brindar una oportunidad única a jugadores que no cuentan con competiciones federadas en sus respectivas federaciones durante esos períodos.
+                  <br />
+                  <br />
+                  Durante estos torneos, los participantes tienen la oportunidad de seguir compitiendo de manera divertida y estimulante, además de conocer a otros compañeros de juego. Nuestro objetivo es ofrecer una experiencia en la que los jugadores puedan seguir desarrollando sus habilidades futbolísticas mientras disfrutan del espíritu competitivo en un entorno amigable y colaborativo.
+                  <br />
+                  <br />
+                  Además de participar en estos torneos, también organizamos sesiones de entrenamiento y tecnificación para preparar a los equipos y mejorar el rendimiento de cada jugador. Creemos en la importancia de ofrecer una experiencia integral que promueva el crecimiento personal y deportivo de nuestros jóvenes futbolistas.
+                  <br />
+                  <br />
+                  En Madrid Promises South, estamos comprometidos con la excelencia y la pasión por el fútbol. Además, contamos con un equipo de fisioterapeutas que viajarán con nosotros, ofreciendo asistencia inmediata ante cualquier lesión. Únete a nosotros y sé parte de una comunidad que valora el trabajo en equipo, la superación personal y la diversión en el campo de juego.
                 </Card.Text>
               </Card.Body>
             </Card>
