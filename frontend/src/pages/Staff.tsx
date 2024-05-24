@@ -4,8 +4,8 @@ import YoCoordinador from "../assets/YoCoordinador.jpeg";
 import YoSeseña from "../assets/YoSeseña.jpeg";
 import YoSitioJuv from "../assets/YoSitioJuv.jpeg";
 import Fisioterapeuta from "../assets/MarioFisio.jpg";
-import './styles/Staff.css';
-import NavBar from './NavBar';
+import  '../styles/Staff.css';
+import NavBar from '../components/NavBar';
 
 const PersonalCard: React.FC<{ imgSrc: string; title: string; description: string }> = ({ imgSrc, title, description }) => {
     return (

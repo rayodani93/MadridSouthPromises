@@ -1,8 +1,9 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import balonEstadio from "../assets/fotoRegistro.jpg";
-import './styles/Registro.css';
-import NavBar from './NavBar';
-import validator from 'validator'; // Importa la biblioteca validator.js para validar el correo electrónico
+import '../styles/Registro.css';
+import NavBar from '../components/NavBar';
+import validator from 'validator';
+import supabase from '../config/supabaseClient';
 
 function Registro() {
   const [nombre, setNombre] = useState('');
@@ -11,6 +12,8 @@ function Registro() {
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChangeNombre = (event: ChangeEvent<HTMLInputElement>) => {
     setNombre(event.target.value);
@@ -34,8 +37,9 @@ function Registro() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError('');
+    setSuccess('');
 
-    // Validaciones
     if (!nombre || !apellidos || !correoElectronico || !contrasena || !confirmarContrasena) {
       setError('Por favor, complete todos los campos.');
       return;
@@ -51,37 +55,69 @@ function Registro() {
       return;
     }
 
+    if (isSubmitting) {
+      setError('Por favor, espere antes de intentar nuevamente.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      const response = await fetch('http://localhost:5173/api/registro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre,
-          apellidos,
-          correoElectronico,
-          contrasena,
-        }),
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: correoElectronico,
+        password: contrasena,
+        options: {
+          data: {
+            first_name: nombre,
+            last_name: apellidos,
+          }
+        }
       });
 
-
-      if (!response.ok) {
-        throw new Error('No se pudo completar el registro.');
+      if (signUpError) {
+        console.error('Error en signUp:', signUpError.message);
+        if (signUpError.status === 429) {
+          setError('Límite de tasa de correo electrónico excedido. Por favor, inténtelo de nuevo más tarde.');
+        } else {
+          setError(signUpError.message);
+        }
+        throw signUpError;
       }
 
-      // Si todas las validaciones pasan y el registro es exitoso, limpia el formulario y muestra un mensaje de éxito
-      setNombre('');
-      setApellidos('');
-      setCorreoElectronico('');
-      setContrasena('');
-      setConfirmarContrasena('');
-      setError('¡Registro exitoso!');
-    } catch (error) {
-      console.error('Error al enviar datos de registro:', error);
-      setError('No se pudo completar el registro. Por favor, inténtelo de nuevo.');
+      const user = signUpData.user;
+      console.log('Usuario registrado:', user);
+
+      if (user) {
+        const { data: insertData, error: dbError } = await supabase
+          .from('familiares')
+          .insert([{ nombre, apellidos, correoelectronico: correoElectronico }])
+          .select();
+
+        if (dbError) {
+          console.error('Error en inserción en la base de datos:', dbError.message);
+          setError(dbError.message);
+          throw dbError;
+        }
+
+        console.log('Datos insertados:', insertData);
+
+        setNombre('');
+        setApellidos('');
+        setCorreoElectronico('');
+        setContrasena('');
+        setConfirmarContrasena('');
+        setSuccess('¡Registro exitoso! Por favor, verifica tu correo electrónico.');
+      }
+    } catch (error: any) {
+      console.error('Error al registrar usuario:', error.message || error);
+      setError(error.message || 'No se pudo completar el registro. Por favor, inténtelo de nuevo.');
+    } finally {
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 60000); // Esperar 60 segundos antes de permitir otro intento
     }
   };
+
   return (
     <div className="registro-container py-4">
       <div className="row g-0 align-items-center">
@@ -90,7 +126,8 @@ function Registro() {
             <div className="card-body p-5 shadow-5 text-center">
               <h3 className="fw-bold mb-5">Registrarse</h3>
               <form onSubmit={handleSubmit}>
-                <div className="text-danger">{error}</div> {/* Muestra el mensaje de error */}
+                <div className="text-danger">{error}</div>
+                <div className="text-success">{success}</div>
                 <div className="row">
                   <div className="col-md-6 mb-4">
                     <div data-mdb-input-init className="form-outline">
@@ -156,7 +193,9 @@ function Registro() {
                   <label className="form-label" htmlFor="confirmarContrasena">Confirmar Contraseña</label>
                 </div>
 
-                <button type="submit" className="btn btn-primary btn-block mb-4">Registrarse</button>
+                <button type="submit" className="btn btn-primary btn-block mb-4" disabled={isSubmitting}>
+                  Registrarse
+                </button>
 
                 <div className="text-center">
                   <p>¿Ya tienes una cuenta? <a href="/login">Iniciar Sesión</a></p>

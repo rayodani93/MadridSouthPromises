@@ -3,8 +3,8 @@ import { Card, Container, Row, Col } from 'react-bootstrap';
 import fotoInicio from "../assets/FotoInicio.jpeg";
 import comedor1 from "../assets/Comedor.jpeg";
 import comedor2 from "../assets/Comedor2.jpeg";
-import NavBar from './NavBar';
-import './styles/PaginaInicio.css';
+import NavBar from '../components/NavBar';
+import '../styles/PaginaInicio.css';
 
 const PaginaInicio: React.FC = () => {
   return (

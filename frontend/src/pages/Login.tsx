@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import './styles/Login.css';
-import NavBar from './NavBar';
+import '../styles/Login.css';
+import NavBar from '../components/NavBar';
 
 function Login() {
   const [correoElectronico, setCorreoElectronico] = useState('');

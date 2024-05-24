@@ -4,7 +4,7 @@ import { FaExternalLinkAlt } from 'react-icons/fa'; // Importa el ícono de enla
 import CostaBlanca from "../assets/CostaBlanca.jpg";
 import Donosti from "../assets/DonostiCup.jpg";
 import Mediterranean from "../assets/MediterraneanCup.jpeg";
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 
 const PersonalCard: React.FC<{ imgSrc: string; title: string; description: string; website: string }> = ({ imgSrc, title, description, website }) => {
     return (
