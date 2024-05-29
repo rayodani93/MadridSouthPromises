@@ -5,9 +5,10 @@ import Registro from './pages/Registro';
 import Staff from './pages/Staff';
 import Torneos from './pages/Torneos';
 import Equipos from './pages/Equipos';
-import EquipoDetalle from './pages/EquipoDetalle'; // Importa el componente EquipoDetalle
+import EquipoDetalle from './pages/EquipoDetalle'; 
 import VerificarCorreo from './pages/verifyEmail';
-import Dashboard from './pages/Dashboard'; // Importa el componente Dashboard
+import Dashboard from './pages/Dashboard'; 
+import PrivateRoute from './components/PrivateRoute'; 
 
 function PrincipalApp() {
   return (
@@ -21,7 +22,14 @@ function PrincipalApp() {
         <Route path="/equipos" element={<Equipos />} /> 
         <Route path="/equipos/:id" element={<EquipoDetalle />} /> 
         <Route path="/verify-email" element={<VerificarCorreo />} /> 
-        <Route path="/dashboard" element={<Dashboard />} /> {/* Añade la ruta para Dashboard */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );

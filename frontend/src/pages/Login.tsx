@@ -37,8 +37,13 @@ function Login() {
       console.log('Usuario autenticado:', user);
 
       if (user) {
-        // Redirigir a la página principal o a la página de equipos
-        navigate('/equipos'); // Cambia '/equipos' por la ruta que desees
+        // Verificar si el usuario es el superusuario
+        if (user.email === 'rayodani93@gmail.com') { 
+          navigate('/dashboard'); 
+        } else {
+          setError('No tienes acceso a este sitio.');
+          await supabase.auth.signOut();
+        }
       }
     } catch (error) {
       if (error instanceof Error) {

@@ -1,6 +1,7 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import supabase from '../config/supabaseClient';
 import '../styles/Dashboard.css';
+import FormComponent from '../components/FormComponent';
 
 const Dashboard: React.FC = () => {
   const [nombreEquipo, setNombreEquipo] = useState('');
@@ -15,169 +16,135 @@ const Dashboard: React.FC = () => {
   const [fechaNacimientoJugador, setFechaNacimientoJugador] = useState('');
   const [dniJugador, setDniJugador] = useState('');
   const [equipoIdJugador, setEquipoIdJugador] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [equipos, setEquipos] = useState<Array<{ id: number; nombre: string }>>([]);
 
-  const handleSubmitEquipo = async (e: FormEvent) => {
+  useEffect(() => {
+    const fetchEquipos = async () => {
+      const { data, error } = await supabase
+        .from('equipos')
+        .select('id, nombre');
+      if (error) {
+        console.error('Error fetching equipos:', error);
+      } else {
+        setEquipos(data);
+      }
+    };
+    fetchEquipos();
+  }, []);
+
+  const handleSubmit = async (
+    e: FormEvent,
+    type: 'equipo' | 'staff' | 'jugador',
+    data: any,
+    resetForm: () => void
+  ) => {
     e.preventDefault();
-    const { error } = await supabase
-      .from('equipos')
-      .insert([{ nombre: nombreEquipo, categoria: categoriaEquipo }]);
-    if (error) {
-      console.error(error);
-      alert('Error al añadir el equipo');
-    } else {
-      setNombreEquipo('');
-      setCategoriaEquipo('');
-      alert('Equipo añadido con éxito');
+    setIsLoading(true);
+
+    let table = '';
+    switch (type) {
+      case 'equipo':
+        table = 'equipos';
+        break;
+      case 'staff':
+        table = 'staff';
+        break;
+      case 'jugador':
+        table = 'jugadores';
+        break;
+      default:
+        return;
     }
-  };
 
-  const handleSubmitStaff = async (e: FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase
-      .from('staff')
-      .insert([{ 
-        nombre: nombreStaff, 
-        apellidos: apellidosStaff, 
-        telefonomovil: telefonoStaff || null, // Asegúrate de enviar null si el campo está vacío
-        puesto: puestoStaff, 
-        equipoid: equipoIdStaff // Usa el nombre exacto de la columna como está en la base de datos
-      }]);
-    if (error) {
-      console.error('Error al añadir miembro del staff:', error);
-      alert('Error al añadir miembro del staff');
-    } else {
-      setNombreStaff('');
-      setApellidosStaff('');
-      setTelefonoStaff('');
-      setPuestoStaff('');
-      setEquipoIdStaff(null);
-      alert('Miembro del staff añadido con éxito');
-    }
-  };
+    const { error } = await supabase.from(table).insert([data]);
 
-  const handleSubmitJugador = async (e: FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase
-      .from('jugadores')
-      .insert([{ 
-        nombre: nombreJugador, 
-        apellidos: apellidosJugador, 
-        fechanacimiento: fechaNacimientoJugador, 
-        dni: dniJugador, 
-        equipoid: equipoIdJugador // Usa el nombre exacto de la columna como está en la base de datos
-      }]);
+    setIsLoading(false);
+
     if (error) {
-      console.error('Error al añadir jugador:', error);
-      alert('Error al añadir jugador');
+      console.error(`Error al añadir ${type}:`, error);
+      alert(`Error al añadir ${type}`);
     } else {
-      setNombreJugador('');
-      setApellidosJugador('');
-      setFechaNacimientoJugador('');
-      setDniJugador('');
-      setEquipoIdJugador(null);
-      alert('Jugador añadido con éxito');
+      resetForm();
+      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} añadido con éxito`);
     }
   };
 
   return (
-    <div className="dashboard-container">
-      <h1>Dashboard</h1>
+    <div className="container mt-5">
+      <h1 className="mb-4">Dashboard</h1>
 
-      <form onSubmit={handleSubmitEquipo}>
-        <h2>Añadir Equipo</h2>
-        <input
-          type="text"
-          placeholder="Nombre del equipo"
-          value={nombreEquipo}
-          onChange={(e) => setNombreEquipo(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Categoría del equipo"
-          value={categoriaEquipo}
-          onChange={(e) => setCategoriaEquipo(e.target.value)}
-          required
-        />
-        <button type="submit">Añadir Equipo</button>
-      </form>
+      <div className="card mb-4">
+        <div className="card-header">
+          <h3>Añadir equipo</h3>
+        </div>
+        <div className="card-body">
+          <FormComponent
+            title=""
+            fields={[
+              { placeholder: 'Nombre del equipo', value: nombreEquipo, onChange: (e) => setNombreEquipo(e.target.value), required: true },
+              { placeholder: 'Categoría del equipo', value: categoriaEquipo, onChange: (e) => setCategoriaEquipo(e.target.value), required: true },
+            ]}
+            onSubmit={(e) => handleSubmit(e, 'equipo', { nombre: nombreEquipo, categoria: categoriaEquipo }, () => {
+              setNombreEquipo('');
+              setCategoriaEquipo('');
+            })}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmitStaff}>
-        <h2>Añadir Miembro del Staff</h2>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={nombreStaff}
-          onChange={(e) => setNombreStaff(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Apellidos"
-          value={apellidosStaff}
-          onChange={(e) => setApellidosStaff(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Teléfono Móvil"
-          value={telefonoStaff}
-          onChange={(e) => setTelefonoStaff(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Puesto"
-          value={puestoStaff}
-          onChange={(e) => setPuestoStaff(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="ID del Equipo"
-          value={equipoIdStaff !== null ? equipoIdStaff : ''}
-          onChange={(e) => setEquipoIdStaff(e.target.value ? parseInt(e.target.value) : null)}
-        />
-        <button type="submit">Añadir Staff</button>
-      </form>
+      <div className="card mb-4">
+        <div className="card-header">
+        <h3>Añadir miembro Staff</h3>
+        </div>
+        <div className="card-body">
+          <FormComponent
+            title=""
+            fields={[
+              { placeholder: 'Nombre', value: nombreStaff, onChange: (e) => setNombreStaff(e.target.value), required: true },
+              { placeholder: 'Apellidos', value: apellidosStaff, onChange: (e) => setApellidosStaff(e.target.value), required: true },
+              { placeholder: 'Teléfono Móvil', value: telefonoStaff, onChange: (e) => setTelefonoStaff(e.target.value) },
+              { placeholder: 'Puesto', value: puestoStaff, onChange: (e) => setPuestoStaff(e.target.value), required: true },
+              { type: 'select', placeholder: 'Seleccionar Equipo', value: equipoIdStaff !== null ? equipoIdStaff : '', onChange: (e) => setEquipoIdStaff(parseInt(e.target.value)), options: equipos.map(e => ({ value: e.id, label: e.nombre })) },
+            ]}
+            onSubmit={(e) => handleSubmit(e, 'staff', { nombre: nombreStaff, apellidos: apellidosStaff, telefonomovil: telefonoStaff || null, puesto: puestoStaff, equipoid: equipoIdStaff }, () => {
+              setNombreStaff('');
+              setApellidosStaff('');
+              setTelefonoStaff('');
+              setPuestoStaff('');
+              setEquipoIdStaff(null);
+            })}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmitJugador}>
-        <h2>Añadir Jugador</h2>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={nombreJugador}
-          onChange={(e) => setNombreJugador(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Apellidos"
-          value={apellidosJugador}
-          onChange={(e) => setApellidosJugador(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          placeholder="Fecha de Nacimiento"
-          value={fechaNacimientoJugador}
-          onChange={(e) => setFechaNacimientoJugador(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="DNI"
-          value={dniJugador}
-          onChange={(e) => setDniJugador(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="ID del Equipo"
-          value={equipoIdJugador !== null ? equipoIdJugador : ''}
-          onChange={(e) => setEquipoIdJugador(e.target.value ? parseInt(e.target.value) : null)}
-        />
-        <button type="submit">Añadir Jugador</button>
-      </form>
+      <div className="card mb-4">
+        <div className="card-header">
+         <h3>Añadir jugador</h3>
+        </div>
+        <div className="card-body">
+          <FormComponent
+            title=""
+            fields={[
+              { placeholder: 'Nombre', value: nombreJugador, onChange: (e) => setNombreJugador(e.target.value), required: true },
+              { placeholder: 'Apellidos', value: apellidosJugador, onChange: (e) => setApellidosJugador(e.target.value), required: true },
+              { type: 'date', placeholder: 'Fecha de Nacimiento', value: fechaNacimientoJugador, onChange: (e) => setFechaNacimientoJugador(e.target.value), required: true },
+              { placeholder: 'DNI', value: dniJugador, onChange: (e) => setDniJugador(e.target.value), required: true },
+              { type: 'select', placeholder: 'Seleccionar Equipo', value: equipoIdJugador !== null ? equipoIdJugador : '', onChange: (e) => setEquipoIdJugador(parseInt(e.target.value)), options: equipos.map(e => ({ value: e.id, label: e.nombre })) },
+            ]}
+            onSubmit={(e) => handleSubmit(e, 'jugador', { nombre: nombreJugador, apellidos: apellidosJugador, fechanacimiento: fechaNacimientoJugador, dni: dniJugador, equipoid: equipoIdJugador }, () => {
+              setNombreJugador('');
+              setApellidosJugador('');
+              setFechaNacimientoJugador('');
+              setDniJugador('');
+              setEquipoIdJugador(null);
+            })}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
     </div>
   );
 };
