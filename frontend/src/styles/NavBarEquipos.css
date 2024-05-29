@@ -1,0 +1,23 @@
+
+.navbar-equipos {
+    margin: 20px 0;
+  }
+  
+  .equipos-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .equipo-item a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .equipo-item a:hover {
+    text-decoration: underline;
+  }
+  

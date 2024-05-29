@@ -1,12 +1,14 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, ChangeEvent, FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 import NavBar from '../components/NavBar';
+import supabase from '../config/supabaseClient';
 
 function Login() {
   const [correoElectronico, setCorreoElectronico] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleChangeCorreoElectronico = (event: ChangeEvent<HTMLInputElement>) => {
     setCorreoElectronico(event.target.value);
@@ -18,21 +20,26 @@ function Login() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError('');
+
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ correoElectronico, contrasena }),
+      // Autenticar al usuario con Supabase
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: correoElectronico,
+        password: contrasena,
       });
-      if (!response.ok) {
+
+      if (signInError) {
         throw new Error('Credenciales incorrectas');
       }
-      const data = await response.json();
 
-      console.log('Token JWT:', data.token);
+      const user = signInData.user;
+      console.log('Usuario autenticado:', user);
 
+      if (user) {
+        // Redirigir a la página principal o a la página de equipos
+        navigate('/equipos'); // Cambia '/equipos' por la ruta que desees
+      }
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
