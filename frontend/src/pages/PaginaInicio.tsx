@@ -9,16 +9,16 @@ import '../styles/PaginaInicio.css';
 const PaginaInicio: React.FC = () => {
   return (
     <div className="pagina-inicio">
-      <Container className="containerTitulo">
-        <h1>Madrid Promises South</h1>        
+      <Container className="container mt-4">
+        <h1 className="text-center">Madrid Promises South</h1>
+        <div className="form-nav-container">
         <NavBar />
-      </Container>
-      <Container className="containerBody">
-        <Row>
-          <Col>
-            <Card className="text-center mb-4">
-              <Card.Img variant="top" src={fotoInicio} alt="Foto de inicio" className="w-100" />
-              <Card.Body>
+      </div>
+        <Row className="justify-content-center mb-4">
+          <Col md={10}>
+            <Card className="text-center shadow">
+              <Card.Img variant="top" src={fotoInicio} alt="Foto de inicio" />
+              <Card.Body className="card-body">
                 <Card.Text className="text">
                   En Madrid Promises South, nos especializamos en la formación de equipos para participar en torneos de fútbol que se llevan a cabo durante periodos vacacionales clave, como verano, Navidad y Semana Santa. Nuestra misión es brindar una oportunidad única a jugadores que no cuentan con competiciones federadas en sus respectivas federaciones durante esos períodos.
                   <br />
@@ -36,14 +36,18 @@ const PaginaInicio: React.FC = () => {
           </Col>
         </Row>
         <Row>
-          <Col md={6}>
-            <Card className="border-0">
-              <Card.Img variant="top" src={comedor1} alt="Comedor 1" className="comedor-image" />
+          <Col md={6} className="mb-4">
+            <Card className="border-0 shadow">
+              <div className="image-container">
+                <Card.Img variant="top" src={comedor1} alt="Comedor 1" className="comedor-image" />
+              </div>
             </Card>
           </Col>
-          <Col md={6}>
-            <Card className="border-0">
-              <Card.Img variant="top" src={comedor2} alt="Comedor 2" className="comedor-image" />
+          <Col md={6} className="mb-4">
+            <Card className="border-0 shadow">
+              <div className="image-container">
+                <Card.Img variant="top" src={comedor2} alt="Comedor 2" className="comedor-image" />
+              </div>
             </Card>
           </Col>
         </Row>

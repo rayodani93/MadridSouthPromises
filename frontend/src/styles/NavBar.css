@@ -1,4 +1,6 @@
 
+ 
+
 .nav-item {
     display: inline;
     margin-right: 10px; 
@@ -24,4 +26,5 @@
     text-decoration: none; /* para que no se subralle el enlace que viene por defecto con la clase link */
     color: inherit; 
   }
+  
   

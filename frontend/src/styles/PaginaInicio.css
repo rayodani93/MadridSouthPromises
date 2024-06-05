@@ -1,32 +1,38 @@
-
-
 .container {
   background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
-  padding: 20px; 
+  padding: 20px;
+  border-radius: 15px;
 }
 
 .card-body {
   background: linear-gradient(to bottom right, #ebfefe, #a6f6f8);
-  padding: 20px; 
+  padding: 20px;
+  border-radius: 15px;
 }
 
 .container h1 {
-  font-family: 'Roboto', sans-serif; 
+  font-family: 'Roboto', sans-serif;
   font-size: 60px;
   font-weight: bold;
   text-align: center;
-  color:  #001764;
-  text-shadow: 2px 2px 4px rgb(253, 0, 190); 
-  margin-bottom: 20px; 
+  color: #001764;
+  text-shadow: 2px 2px 4px rgb(253, 0, 190);
+  margin-bottom: 20px;
 }
 
 .container .text {
   font-weight: bold;
-  color:  #001764; 
-  text-align: justify; 
+  color: #001764;
+  text-align: justify;
 }
 
 .container .image-container {
-  display: flex; 
-  justify-content: center; 
+  display: flex;
+  justify-content: center;
+}
+
+.comedor-image {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
 }

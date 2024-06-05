@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import supabase from '../config/supabaseClient';
-import '../styles/Dashboard.css';
 import FormComponent from '../components/FormComponent';
+import NavBar from '../components/NavBar';
 
 const Dashboard: React.FC = () => {
   const [nombreEquipo, setNombreEquipo] = useState('');
@@ -73,6 +73,9 @@ const Dashboard: React.FC = () => {
   return (
     <div className="container mt-5">
       <h1 className="mb-4">Dashboard</h1>
+      <div className="form-nav-container">
+        <NavBar />
+      </div>
 
       <div className="card mb-4">
         <div className="card-header">
