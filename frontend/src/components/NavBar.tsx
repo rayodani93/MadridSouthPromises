@@ -33,7 +33,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, text, to }) => {
 }
 
 const NavBar: React.FC = () => {
-  const { session } = useAuth(); // Use the authentication context
+  const { session } = useAuth(); // utilizamos authProvider para asegurarnos que el usuario está logueado
 
   return (
     <nav className="navbar">

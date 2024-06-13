@@ -14,9 +14,11 @@ interface FormComponentProps {
   fields: FormField[];
   onSubmit: (e: FormEvent) => void;
   isLoading: boolean;
+  buttonText?: string; 
+  buttonClass?: string; //Añado propiedades opcionales para los botones del Dashboard
 }
 
-const FormComponent: React.FC<FormComponentProps> = ({ title, fields, onSubmit, isLoading }) => {
+const FormComponent: React.FC<FormComponentProps> = ({ title, fields, onSubmit, isLoading, buttonText = 'Añadir', buttonClass = 'btn btn-primary' }) => {
   return (
     <form onSubmit={onSubmit}>
       {title && <h2>{title}</h2>}
@@ -50,8 +52,8 @@ const FormComponent: React.FC<FormComponentProps> = ({ title, fields, onSubmit, 
           </div>
         )
       ))}
-      <button type="submit" className="btn btn-primary" disabled={isLoading}>
-        {isLoading ? 'Cargando...' : 'Añadir'}
+      <button type="submit" className={buttonClass} disabled={isLoading}>
+        {isLoading ? 'Cargando...' : buttonText}
       </button>
     </form>
   );

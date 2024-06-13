@@ -18,19 +18,27 @@ const Dashboard: React.FC = () => {
   const [equipoIdJugador, setEquipoIdJugador] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [equipos, setEquipos] = useState<Array<{ id: number; nombre: string }>>([]);
+  const [staff, setStaff] = useState<Array<{ id: number; nombre: string; apellidos: string }>>([]);
+  const [jugadores, setJugadores] = useState<Array<{ id: number; nombre: string; apellidos: string }>>([]);
+  const [selectedEquipoId, setSelectedEquipoId] = useState<number | null>(null);
+  const [selectedJugadorId, setSelectedJugadorId] = useState<number | null>(null);
+  const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchEquipos = async () => {
-      const { data, error } = await supabase
-        .from('equipos')
-        .select('id, nombre');
-      if (error) {
-        console.error('Error fetching equipos:', error);
+    const fetchData = async () => {
+      const equiposData = await supabase.from('equipos').select('id, nombre');
+      const staffData = await supabase.from('staff').select('id, nombre, apellidos');
+      const jugadoresData = await supabase.from('jugadores').select('id, nombre, apellidos');
+
+      if (equiposData.error || staffData.error || jugadoresData.error) {
+        console.error('Error fetching data:', equiposData.error, staffData.error, jugadoresData.error);
       } else {
-        setEquipos(data);
+        setEquipos(equiposData.data);
+        setStaff(staffData.data);
+        setJugadores(jugadoresData.data);
       }
     };
-    fetchEquipos();
+    fetchData();
   }, []);
 
   const handleSubmit = async (
@@ -67,6 +75,72 @@ const Dashboard: React.FC = () => {
     } else {
       resetForm();
       alert(`${type.charAt(0).toUpperCase() + type.slice(1)} añadido con éxito`);
+      const fetchData = async () => {
+        const equiposData = await supabase.from('equipos').select('id, nombre');
+        const staffData = await supabase.from('staff').select('id, nombre, apellidos');
+        const jugadoresData = await supabase.from('jugadores').select('id, nombre, apellidos');
+
+        if (equiposData.error || staffData.error || jugadoresData.error) {
+          console.error('Error fetching data:', equiposData.error, staffData.error, jugadoresData.error);
+        } else {
+          setEquipos(equiposData.data);
+          setStaff(staffData.data);
+          setJugadores(jugadoresData.data);
+        }
+      };
+      fetchData();
+    }
+  };
+
+  const handleDelete = async (
+    type: 'equipo' | 'staff' | 'jugador',
+    id: number | null
+  ) => {
+    if (id === null) return;
+
+    setIsLoading(true);
+
+    let table = '';
+    switch (type) {
+      case 'equipo':
+        table = 'equipos';
+        break;
+      case 'staff':
+        table = 'staff';
+        break;
+      case 'jugador':
+        table = 'jugadores';
+        break;
+      default:
+        return;
+    }
+
+    const { error } = await supabase.from(table).delete().eq('id', id);
+
+    setIsLoading(false);
+
+    if (error) {
+      console.error(`Error al eliminar ${type}:`, error);
+      alert(`Error al eliminar ${type}`);
+    } else {
+      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} eliminado con éxito`);
+      if (type === 'equipo') setSelectedEquipoId(null);
+      if (type === 'staff') setSelectedStaffId(null);
+      if (type === 'jugador') setSelectedJugadorId(null);
+      const fetchData = async () => {
+        const equiposData = await supabase.from('equipos').select('id, nombre');
+        const staffData = await supabase.from('staff').select('id, nombre, apellidos');
+        const jugadoresData = await supabase.from('jugadores').select('id, nombre, apellidos');
+
+        if (equiposData.error || staffData.error || jugadoresData.error) {
+          console.error('Error fetching data:', equiposData.error, staffData.error, jugadoresData.error);
+        } else {
+          setEquipos(equiposData.data);
+          setStaff(staffData.data);
+          setJugadores(jugadoresData.data);
+        }
+      };
+      fetchData();
     }
   };
 
@@ -94,12 +168,25 @@ const Dashboard: React.FC = () => {
             })}
             isLoading={isLoading}
           />
+          <div className="mt-3">
+            <h3>Eliminar equipo</h3>
+            <FormComponent
+              title=""
+              fields={[
+                { type: 'select', placeholder: 'Seleccionar Equipo', value: selectedEquipoId !== null ? selectedEquipoId : '', onChange: (e) => setSelectedEquipoId(parseInt(e.target.value)), options: equipos.map(e => ({ value: e.id, label: e.nombre })) },
+              ]}
+              onSubmit={(e) => { e.preventDefault(); handleDelete('equipo', selectedEquipoId); }}
+              buttonText="Eliminar"
+              buttonClass="btn btn-danger" 
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="card-header">
-        <h3>Añadir miembro Staff</h3>
+          <h3>Añadir miembro Staff</h3>
         </div>
         <div className="card-body">
           <FormComponent
@@ -120,12 +207,26 @@ const Dashboard: React.FC = () => {
             })}
             isLoading={isLoading}
           />
+
+          <div className="mt-3">
+            <h3>Eliminar miembro Staff</h3>
+            <FormComponent
+              title=""
+              fields={[
+                { type: 'select', placeholder: 'Seleccionar Staff', value: selectedStaffId !== null ? selectedStaffId : '', onChange: (e) => setSelectedStaffId(parseInt(e.target.value)), options: staff.map(s => ({ value: s.id, label: `${s.nombre} ${s.apellidos}` })) },
+              ]}
+              onSubmit={(e) => { e.preventDefault(); handleDelete('staff', selectedStaffId); }}
+              buttonText="Eliminar"
+              buttonClass="btn btn-danger" 
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="card-header">
-         <h3>Añadir jugador</h3>
+          <h3>Añadir jugador</h3>
         </div>
         <div className="card-body">
           <FormComponent
@@ -146,6 +247,19 @@ const Dashboard: React.FC = () => {
             })}
             isLoading={isLoading}
           />
+          <div className="mt-3">
+            <h3>Eliminar jugador</h3>
+            <FormComponent
+              title=""
+              fields={[
+                { type: 'select', placeholder: 'Seleccionar Jugador', value: selectedJugadorId !== null ? selectedJugadorId : '', onChange: (e) => setSelectedJugadorId(parseInt(e.target.value)), options: jugadores.map(j => ({ value: j.id, label: `${j.nombre} ${j.apellidos}` })) },
+              ]}
+              onSubmit={(e) => { e.preventDefault(); handleDelete('jugador', selectedJugadorId); }}
+              buttonText="Eliminar"
+              buttonClass="btn btn-danger" 
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </div>
     </div>
