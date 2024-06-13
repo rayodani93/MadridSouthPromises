@@ -23,7 +23,7 @@ function Login() {
     setError('');
 
     try {
-      // Autenticar al usuario con Supabase
+      
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: correoElectronico,
         password: contrasena,
@@ -41,8 +41,7 @@ function Login() {
         if (user.email === 'rayodani93@gmail.com') { 
           navigate('/dashboard'); 
         } else {
-          setError('No tienes acceso a este sitio.');
-          await supabase.auth.signOut();
+          navigate('/equipos');
         }
       }
     } catch (error) {

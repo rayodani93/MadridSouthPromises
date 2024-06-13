@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
 import YoCoordinador from "../assets/YoCoordinador.jpeg";
-import YoSeseña from "../assets/YoSeseña.jpeg";
-import YoSitioJuv from "../assets/YoSitioJuv.jpeg";
+import VicenteContreras from "../assets/VicenteContreras.jpg";
+import DaniCalvo from "../assets/DaniCalvo.jpg";
 import Fisioterapeuta from "../assets/MarioFisio.jpg";
 import VictorMata from "../assets/VictorMata.jpg";
 import JesusNieva from "../assets/JesusNieva.jpg";
@@ -71,7 +71,7 @@ const Staff: React.FC = () => {
                         Cofundador de FutCamp Aranjuez, el primer campus de futbol de nuestra localidad."
                     />
                     <PersonalCard
-                        imgSrc={YoSitioJuv}
+                        imgSrc={VicenteContreras}
                         title="Vicente Contreras"
                         description="Entrenador UEFA B, tras una vida ligada al fútbol como jugador, fue la pasión de sus hijos por el mismo
                         lo que le llevó a dar el salto a los banquillos. Tras dos temporadas en el Aranjuez y tras salvar al Juvenil B del descenso
@@ -79,8 +79,8 @@ const Staff: React.FC = () => {
                         "
                     />
                     <PersonalCard
-                        imgSrc={YoSitioJuv}
-                        title="Vicente Contreras"
+                        imgSrc={DaniCalvo}
+                        title="Dani Calvo"
                         description="Entrenador UEFA B, tras una vida ligada al fútbol como jugador, fue la pasión de sus hijos por el mismo
                         lo que le llevó a dar el salto a los banquillos. Tras dos temporadas en el Aranjuez y tras salvar al Juvenil B del descenso
                         tras hacerse cargo del equipo a mitad de temporada, la próxima campaña dirigirá el Juvenil A del CD Arancetano.

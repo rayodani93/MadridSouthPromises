@@ -12,3 +12,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 console.log('supabase:', supabase);
 
 export default supabase;
+
+
+

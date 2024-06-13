@@ -1,32 +1,36 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { useSession } from '@supabase/auth-helpers-react';
+import { useAuth } from '../pages/AuthProvider';
 import supabase from '../config/supabaseClient';
 import { Modal, Button, Form, Alert, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import estadio from '../assets/Estadio.jpg'; // Importación ESModules
+import entrenamiento from '../assets/entrenamientoEspaña.jpg';
 import NavBar from '../components/NavBar';
 
 interface Reservation {
     id?: number;
-    title: string;
+    nombre: string;
     start_time: string;
     end_time: string;
     user_id: string;
+    categoria: string;
 }
 
 const Tecnificacion: React.FC = () => {
-    const session = useSession();
+    const { session, user } = useAuth();
     const [date, setDate] = useState<Date | null>(null);
-    const [time, setTime] = useState<string>('');
+    const [categoria, setCategoria] = useState<string>('');
     const [showModal, setShowModal] = useState(false);
     const [reservations, setReservations] = useState<Reservation[]>([]);
-    const [title, setTitle] = useState('');
+    const [nombre, setNombre] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log('Session:', session);
+        console.log('User:', user);
+
         const fetchReservations = async () => {
             const { data, error } = await supabase
                 .from('reservas')
@@ -39,7 +43,7 @@ const Tecnificacion: React.FC = () => {
         };
 
         fetchReservations();
-    }, []);
+    }, [session, user]);
 
     const handleDateChange = (value: Date | Date[] | null) => {
         const selectedDate = Array.isArray(value) ? value[0] : value;
@@ -47,6 +51,7 @@ const Tecnificacion: React.FC = () => {
             if ([0, 2, 4].includes(selectedDate.getDay())) { // 0: Sunday, 2: Tuesday, 4: Thursday
                 setDate(selectedDate);
                 setShowModal(true);
+                setError(null); // Clear previous errors
             } else {
                 setError('Las clases solo están disponibles los domingos, martes y jueves.');
             }
@@ -58,43 +63,53 @@ const Tecnificacion: React.FC = () => {
     const getAvailableTimes = () => {
         if (!date) return [];
 
-        const day = date.getDay();
-        if (day === 0) { // Sunday
-            return [
-                { start: '09:00', end: '10:30', description: 'Benjamines y Femenino' },
-                { start: '10:30', end: '12:00', description: 'Infantiles y Alevines' },
-                { start: '12:00', end: '13:30', description: 'Juveniles y Cadetes' }
-            ];
-        } else if (day === 2 || day === 4) { // Tuesday and Thursday
-            return [
-                { start: '18:00', end: '19:20', description: 'Benjamines y Femenino' },
-                { start: '19:20', end: '20:40', description: 'Infantiles y Alevines' },
-                ...(day === 4 ? [{ start: '20:40', end: '22:00', description: 'Juveniles y Cadetes' }] : [])
-            ];
-        }
-        return [];
+        return [
+            { categoria: 'Benjamines', time: '09:00 - 10:30' },
+            { categoria: 'Femenino', time: '09:00 - 10:30' },
+            { categoria: 'Infantiles', time: '10:30 - 12:00' },
+            { categoria: 'Alevines', time: '10:30 - 12:00' },
+            { categoria: 'Cadetes', time: '12:00 - 13:30' },
+            { categoria: 'Juveniles', time: '12:00 - 13:30' }
+        ];
     };
 
     const handleCreateReservation = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!date || !session) return;
+        if (!date || !session || !user) {
+            setError('Debe iniciar sesión para reservar una clase.');
+            return;
+        }
 
-        const selectedTime = getAvailableTimes().find(t => t.description === time);
+        const selectedTime = getAvailableTimes().find(t => t.categoria === categoria);
         if (!selectedTime) return;
 
         const start_time = new Date(date);
-        const [startHour, startMinute] = selectedTime.start.split(':');
+        const [startHour, startMinute] = selectedTime.time.split(' - ')[0].split(':');
         start_time.setHours(parseInt(startHour), parseInt(startMinute));
 
         const end_time = new Date(date);
-        const [endHour, endMinute] = selectedTime.end.split(':');
+        const [endHour, endMinute] = selectedTime.time.split(' - ')[1].split(':');
         end_time.setHours(parseInt(endHour), parseInt(endMinute));
 
+        // Check if the number of reservations for this category and date is less than 16
+        const { count } = await supabase
+            .from('reservas')
+            .select('*', { count: 'exact' })
+            .eq('categoria', categoria)
+            .gte('start_time', start_time.toISOString().split('T')[0])
+            .lt('end_time', end_time.toISOString().split('T')[0]);
+
+        if ((count ?? 0) >= 16) {
+            setError(`No se pueden hacer más reservas para la categoría ${categoria} en esta fecha.`);
+            return;
+        }
+
         const newReservation: Reservation = {
-            title,
+            nombre,
             start_time: start_time.toISOString(),
             end_time: end_time.toISOString(),
-            user_id: session.user.id,
+            user_id: user.id,
+            categoria,
         };
 
         const { data, error } = await supabase
@@ -116,35 +131,35 @@ const Tecnificacion: React.FC = () => {
     const handleCloseModal = () => {
         setShowModal(false);
         setDate(null);
-        setTime('');
-        setTitle('');
+        setCategoria('');
+        setNombre('');
         setError(null);
         setSuccess(null);
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        if (name === 'title') {
-            setTitle(value);
-        } else if (name === 'time') {
-            setTime(value);
+        if (name === 'nombre') {
+            setNombre(value);
+        } else if (name === 'categoria') {
+            setCategoria(value);
         }
     };
 
     const tileDisabled = ({ date }: { date: Date }) => {
-        return ![0, 2, 4].includes(date.getDay()); // Disable all days except Sunday, Tuesday, Thursday
+        return ![0, 2, 4].includes(date.getDay()); // Para que no se pueda reservar en días que no hay clases
     };
 
     return (
         <Container className="mt-4">
-            <h1>Reserva de Clases de Tecnificación</h1>
+            <h1>Tecnificación</h1>
             <div className="form-nav-container">
                 <NavBar />
             </div>
             {error && <Alert variant="danger">{error}</Alert>}
             {success && <Alert variant="success">{success}</Alert>}
             <Row>
-                <Col md={8} className="mx-auto">
+                <Col md={4} className="mx-auto">
                     <Calendar
                         onChange={handleDateChange as any}
                         value={date}
@@ -159,28 +174,28 @@ const Tecnificacion: React.FC = () => {
                 <Modal.Body>
                     <Form onSubmit={handleCreateReservation}>
                         <Form.Group>
-                            <Form.Label>Título</Form.Label>
+                            <Form.Label>Nombre</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="title"
-                                value={title}
+                                name="nombre"
+                                value={nombre}
                                 onChange={handleChange}
                                 required
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Horario</Form.Label>
+                            <Form.Label>Categoría</Form.Label>
                             <Form.Control
                                 as="select"
-                                name="time"
-                                value={time}
+                                name="categoria"
+                                value={categoria}
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="">Seleccionar horario</option>
+                                <option value="">Seleccionar categoría</option>
                                 {getAvailableTimes().map((timeOption) => (
-                                    <option key={timeOption.description} value={timeOption.description}>
-                                        {timeOption.start} - {timeOption.end} {timeOption.description}
+                                    <option key={timeOption.categoria} value={timeOption.categoria}>
+                                        {timeOption.categoria} ({timeOption.time})
                                     </option>
                                 ))}
                             </Form.Control>
@@ -190,7 +205,7 @@ const Tecnificacion: React.FC = () => {
                 </Modal.Body>
             </Modal>
             <div className="text-center mt-4">
-                <img src={estadio} alt="Estadio" className="img-fluid rounded" />
+                <img src={entrenamiento} alt="Estadio" className="img-fluid rounded" />
             </div>
         </Container>
     );

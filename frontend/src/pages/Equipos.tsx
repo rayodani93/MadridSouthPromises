@@ -159,7 +159,9 @@ const Equipos: React.FC = () => {
   return (
     <Container className="equipos-container mt-4">
       <h1 className="my-4">Equipos</h1>
-      <NavBar />
+      <div className="form-nav-container">
+          <NavBar />
+        </div>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
       <Row>
@@ -193,4 +195,3 @@ const Equipos: React.FC = () => {
 };
 
 export default Equipos;
-4

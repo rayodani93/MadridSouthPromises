@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import '../styles/NavBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faHome, faUsers, faUnlockAlt, faTrophy, faTools } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUsers, faUnlockAlt, faTrophy, faTools, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../pages/AuthProvider';
 
 interface NavItemProps {
   icon: IconDefinition;
@@ -32,6 +33,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon, text, to }) => {
 }
 
 const NavBar: React.FC = () => {
+  const { session } = useAuth(); // Use the authentication context
+
   return (
     <nav className="navbar">
       <ul className="nav-menu">
@@ -39,7 +42,10 @@ const NavBar: React.FC = () => {
         <NavItem icon={faUsers} text="Staff" to="/staff" />
         <NavItem icon={faUnlockAlt} text="Acceso" to="/login" />
         <NavItem icon={faTrophy} text="Torneos" to="/torneos" />
-        <NavItem icon={faTools} text="Tecnificación" to="/tecnificacion"/>       
+        <NavItem icon={faTools} text="Tecnificación" to="/tecnificacion"/>
+        {session && (
+          <NavItem icon={faUsersCog} text="Equipos" to="/equipos" />
+        )}      
       </ul>     
     </nav>    
   );

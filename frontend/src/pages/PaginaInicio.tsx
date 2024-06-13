@@ -5,15 +5,20 @@ import comedor1 from "../assets/Comedor.jpeg";
 import comedor2 from "../assets/Comedor2.jpeg";
 import NavBar from '../components/NavBar';
 import '../styles/PaginaInicio.css';
+import logoMSP from '../assets/LogoMadridSouthPromises.png';
+
 
 const PaginaInicio: React.FC = () => {
   return (
     <div className="pagina-inicio">
       <Container className="container mt-4">
+        <div className="logo-container text-center mb-4">
+          <img src={logoMSP} alt="Logo Madrid South Promises" className="logo-image" />
+        </div>
         <h1 className="text-center">Madrid Promises South</h1>
         <div className="form-nav-container">
-        <NavBar />
-      </div>
+          <NavBar />
+        </div>
         <Row className="justify-content-center mb-4">
           <Col md={10}>
             <Card className="text-center shadow">

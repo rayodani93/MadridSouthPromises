@@ -16,7 +16,7 @@ const PersonalCard: React.FC<{ imgSrc: string; title: string; description: strin
                     alt={title} style={{ maxHeight: '600px', objectFit: 'cover' }} />
                 <Card.Body>
                     <Card.Title className="card-title">
-                        {title} 
+                        {title}
                         <a href={website} className="external-link" target="_blank" rel="noopener noreferrer"><FaExternalLinkAlt /></a> {/* Enlace al sitio web con el ícono de enlace externo */}
                     </Card.Title>
                     <Card.Text className="card-description">{description}</Card.Text>
@@ -31,7 +31,9 @@ const Torneos: React.FC = () => {
         <div className="Torneos-Titulo">
             <div className="containerTitulo">
                 <h1>Torneos</h1>
-                <NavBar />
+                <div className="form-nav-container">
+                    <NavBar />
+                </div>
             </div>
             <div className="Torneos-Info">
                 <Row>
