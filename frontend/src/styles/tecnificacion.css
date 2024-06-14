@@ -1,0 +1,21 @@
+
+.RowCalendar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 700px;
+    
+}
+
+.ColCalendar {
+    width: 100%;
+    max-width: 750px;   
+       
+}
+
+.Calendar {
+    width: 100%;
+    font-size: 3rem; 
+    
+}
+

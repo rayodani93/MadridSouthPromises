@@ -7,6 +7,7 @@ import { Modal, Button, Form, Alert, Container, Row, Col } from 'react-bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import entrenamiento from '../assets/entrenamientoEspaña.jpg';
 import NavBar from '../components/NavBar';
+import '../styles/tecnificacion.css';
 
 interface Reservation {
     id?: number;
@@ -48,10 +49,10 @@ const Tecnificacion: React.FC = () => {
     const handleDateChange = (value: Date | Date[] | null) => {
         const selectedDate = Array.isArray(value) ? value[0] : value;
         if (selectedDate && session) {
-            if ([0, 2, 4].includes(selectedDate.getDay())) { // 0: Sunday, 2: Tuesday, 4: Thursday
+            if ([0, 2, 4].includes(selectedDate.getDay())) { 
                 setDate(selectedDate);
                 setShowModal(true);
-                setError(null); // Clear previous errors
+                setError(null); 
             } else {
                 setError('Las clases solo están disponibles los domingos, martes y jueves.');
             }
@@ -91,7 +92,7 @@ const Tecnificacion: React.FC = () => {
         const [endHour, endMinute] = selectedTime.time.split(' - ')[1].split(':');
         end_time.setHours(parseInt(endHour), parseInt(endMinute));
 
-        // Check if the number of reservations for this category and date is less than 16
+        // Mirar si ya hay 16 reservas para la categoría seleccionada en la fecha seleccionada
         const { count } = await supabase
             .from('reservas')
             .select('*', { count: 'exact' })
@@ -115,7 +116,7 @@ const Tecnificacion: React.FC = () => {
         const { data, error } = await supabase
             .from('reservas')
             .insert([newReservation])
-            .select('*'); // Agregamos select para obtener los datos insertados
+            .select('*'); 
 
         if (error) {
             setError('Error al reservar la clase.');
@@ -158,15 +159,16 @@ const Tecnificacion: React.FC = () => {
             </div>
             {error && <Alert variant="danger">{error}</Alert>}
             {success && <Alert variant="success">{success}</Alert>}
-            <Row>
-                <Col md={4} className="mx-auto">
-                    <Calendar
+            <Row className='RowCalendar'>
+                <Col md={5}  className="ColCalendar">
+                    <Calendar className="Calendar"
                         onChange={handleDateChange as any}
                         value={date}
                         tileDisabled={tileDisabled}
                     />
                 </Col>
             </Row>
+            
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Reservar Clase</Modal.Title>

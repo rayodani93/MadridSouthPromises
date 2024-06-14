@@ -3,6 +3,10 @@ import supabase from '../config/supabaseClient';
 import FormComponent from '../components/FormComponent';
 import NavBar from '../components/NavBar';
 
+
+//Definimos el Dashboard creando estados para todos los campos de 
+//los formularios y para el estado de carga 
+
 const Dashboard: React.FC = () => {
   const [nombreEquipo, setNombreEquipo] = useState('');
   const [categoriaEquipo, setCategoriaEquipo] = useState('');
@@ -24,6 +28,7 @@ const Dashboard: React.FC = () => {
   const [selectedJugadorId, setSelectedJugadorId] = useState<number | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
 
+  // useEffect para obtener los datos de los equipos, staff y jugadores
   useEffect(() => {
     const fetchData = async () => {
       const equiposData = await supabase.from('equipos').select('id, nombre');
@@ -75,6 +80,7 @@ const Dashboard: React.FC = () => {
     } else {
       resetForm();
       alert(`${type.charAt(0).toUpperCase() + type.slice(1)} añadido con éxito`);
+      // Actualizamos datos tras una inserción
       const fetchData = async () => {
         const equiposData = await supabase.from('equipos').select('id, nombre');
         const staffData = await supabase.from('staff').select('id, nombre, apellidos');
@@ -127,6 +133,7 @@ const Dashboard: React.FC = () => {
       if (type === 'equipo') setSelectedEquipoId(null);
       if (type === 'staff') setSelectedStaffId(null);
       if (type === 'jugador') setSelectedJugadorId(null);
+      // Actualizamos datos tras una eliminación
       const fetchData = async () => {
         const equiposData = await supabase.from('equipos').select('id, nombre');
         const staffData = await supabase.from('staff').select('id, nombre, apellidos');

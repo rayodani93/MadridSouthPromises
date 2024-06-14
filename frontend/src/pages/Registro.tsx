@@ -34,7 +34,7 @@ function Registro() {
   const handleChangeConfirmarContrasena = (event: ChangeEvent<HTMLInputElement>) => {
     setConfirmarContrasena(event.target.value);
   };
-
+  //Maneja cambios en el formulario y limpia errores previos
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
@@ -87,6 +87,7 @@ function Registro() {
       const user = signUpData.user;
       console.log('Usuario registrado:', user);
 
+      //Tras registro exitoso, insertamos los datos en la BBDD
       if (user) {
         const { data: insertData, error: dbError } = await supabase
           .from('familiares')
@@ -113,7 +114,7 @@ function Registro() {
       setError(error.message || 'No se pudo completar el registro. Por favor, inténtelo de nuevo.');
     } finally {
       setTimeout(() => {
-        setIsSubmitting(false);
+        setIsSubmitting(false);//Permitir otro intento despues de esperar 60 segundos
       }, 60000); // Esperar 60 segundos antes de permitir otro intento
     }
   };
